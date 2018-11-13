@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 # coding: UTF-8
 
+import os
+
+SECRET_KEY = os.urandom(24)
+
 # 调试模式配置
 DEBUG = True
 
@@ -18,4 +22,4 @@ DB_URI = 'mysql+pymysql://%s:%s@%s:%s/%s?charset=utf8' % (DB_USERNAME, DB_PASSWO
 SQLALCHEMY_DATABASE_URI = DB_URI
 
 # 设置模型改变通知为关闭状态
-SQLALCHEMY_TRACK_MODIFICATION = False
+SQLALCHEMY_TRACK_MODIFICATIONS = False
