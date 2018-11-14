@@ -23,3 +23,6 @@ SQLALCHEMY_DATABASE_URI = DB_URI
 
 # 设置模型改变通知为关闭状态
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+# 配置用户ID表示
+CMS_USER_ID = "cms_user_id"

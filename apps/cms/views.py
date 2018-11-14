@@ -3,6 +3,8 @@ from flask import views
 from flask import render_template, request, session, redirect, url_for
 from .forms import LoginForm
 from .models import CMSUser
+from .decorators import login_required
+import config
 
 bp = Blueprint('cms', __name__, url_prefix='/cms')
 
@@ -22,7 +24,7 @@ class LoginView(views.MethodView):
 
             user = CMSUser.query.filter_by(email=email).first()
             if user and user.check_password(password):
-                session['user_id'] = user.id
+                session[config.CMS_USER_ID] = user.id
                 if remember:
                     # 如果过期时间为记住我，时间就设置为31天
                     session.permanent = True
@@ -39,6 +41,7 @@ bp.add_url_rule('/login/', view_func=LoginView.as_view('login'))
 
 
 @bp.route('/')
+@login_required
 def index():
     return 'cms'
 
