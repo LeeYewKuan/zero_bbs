@@ -43,5 +43,5 @@ bp.add_url_rule('/login/', view_func=LoginView.as_view('login'))
 @bp.route('/')
 @login_required
 def index():
-    return 'cms'
+    return render_template('cms/cms_index.html')
 
