@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask import views
-from flask import render_template, request, session, redirect, url_for
+from flask import render_template, request, session, redirect, url_for,g
 from .forms import LoginForm
 from .models import CMSUser
 from .decorators import login_required
@@ -38,6 +38,12 @@ class LoginView(views.MethodView):
 
 
 bp.add_url_rule('/login/', view_func=LoginView.as_view('login'))
+
+
+@bp.route('/logout/')
+def logout():
+    session.pop(config.CMS_USER_ID)
+    return redirect(url_for('cms.login'))
 
 
 @bp.route('/')
