@@ -2,6 +2,8 @@
   <dictionary name="LeeYewKuan">
     <words>
       <w>pymysql</w>
+      <w>resetpwd</w>
+      <w>zeroajax</w>
     </words>
   </dictionary>
 </component>
