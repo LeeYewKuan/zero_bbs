@@ -1,11 +1,14 @@
 from flask import Blueprint
 from flask import views
-from flask import render_template, request, session, redirect, url_for, g, jsonify
-from .forms import LoginForm, ResetPwdForm
+from flask import render_template, request, session, redirect, url_for, g
+from .forms import LoginForm, ResetPwdForm, ResetEmailForm
 from .models import CMSUser
 from .decorators import login_required
 import config
 from exts import db
+# 邮件
+from exts import mail
+from flask_mail import Message
 from utils import resultful
 
 bp = Blueprint('cms', __name__, url_prefix='/cms')
@@ -64,8 +67,31 @@ class RestPwdView(views.MethodView):
             return resultful.params_error(message=message)
 
 
+class ResetEmailView(views.MethodView):
+
+    decorators = [login_required]
+
+    def get(self):
+        return render_template('cms/cms_resetemail.html')
+
+    def post(self):
+        form = ResetEmailForm(request.form)
+        if form.validate():
+            return resultful.success()
+        else:
+            return resultful.params_error(form.get_error())
+
+
 bp.add_url_rule('/login/', view_func=LoginView.as_view('login'))
 bp.add_url_rule('/resetpwd/', view_func=RestPwdView.as_view('resetpwd'))
+bp.add_url_rule('/resetemail/', view_func=ResetEmailView.as_view('resetemail'))
+
+
+@bp.route('/email/')
+def send_email():
+    message = Message("邮件发送", recipients=["514979156@qq.com"], body="您正在更改zerobbs登录的邮箱，验证码：541234")
+    mail.send(message=message)
+    return "邮件发送成功"
 
 
 @bp.route('/logout/')

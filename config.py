@@ -26,3 +26,19 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # 配置用户ID表示
 CMS_USER_ID = "cms_user_id"
+
+# 配置邮件
+# 发送者邮箱服务器地址
+MAIL_SERVER = "smtp.qq.com"
+# 端口号：非加密：25
+# MAIL_USE_TLS: 端口号：587
+# MAIL_USE_SSL: 端口好：465
+# QQ邮箱不支持非加密方式发送邮件
+MAIL_PORT = '587'
+MAIL_USE_TLS = True
+MAIL_USERNAME = "2308074270@qq.com"
+# 开启TLS服务的授权码
+MAIL_PASSWORD = ""
+# 默认发送者
+MAIL_DEFAULT_SENDER = "2308074270@qq.com"
+

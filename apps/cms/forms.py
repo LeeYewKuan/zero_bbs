@@ -13,3 +13,9 @@ class ResetPwdForm(BaseForm):
     oldpwd = StringField(validators=[Length(6, 20, message="请输入正确格式的旧密码")])
     newpwd = StringField(validators=[Length(6, 20, message="请输入正确格式的新密码")])
     newpwd2 = StringField(validators=[EqualTo('newpwd', message="两次输入的密码不一致")])
+
+
+class ResetEmailForm(BaseForm):
+    email = StringField(validators=[Email(message="请输入正确的预想格式"), InputRequired(message='请输入邮箱')])
+    captcha = StringField(validators=[Length(6, 6, message="请输入六位的验证码")])
+
