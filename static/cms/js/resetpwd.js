@@ -20,9 +20,19 @@ $(function () {
             },
             'success': function (data) {
                 console.log(data)
+                if (data['code'] == 200) {
+                    oldpwdElement.val("");
+                    newpwdElement.val("");
+                    newpwd2Element.val("")
+                    zeroalert.alertSuccessToast("恭喜，密码修改成功！")
+                } else {
+                    let message = data['message'];
+                    zeroalert.alertInfo(message);
+                }
             },
             'fail': function (error) {
                 console.log(error)
+                zeroalert.alertNetworkError()
             }
         })
     })
