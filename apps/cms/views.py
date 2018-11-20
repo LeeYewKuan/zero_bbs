@@ -9,7 +9,8 @@ from exts import db
 # 邮件
 from exts import mail
 from flask_mail import Message
-from utils import resultful
+from utils import resultful, zerocache
+import string,random
 
 bp = Blueprint('cms', __name__, url_prefix='/cms')
 
@@ -77,6 +78,9 @@ class ResetEmailView(views.MethodView):
     def post(self):
         form = ResetEmailForm(request.form)
         if form.validate():
+            email = form.email.data
+            g.cms_user.email = email
+            db.session.commit()
             return resultful.success()
         else:
             return resultful.params_error(form.get_error())
@@ -87,11 +91,25 @@ bp.add_url_rule('/resetpwd/', view_func=RestPwdView.as_view('resetpwd'))
 bp.add_url_rule('/resetemail/', view_func=ResetEmailView.as_view('resetemail'))
 
 
-@bp.route('/email/')
-def send_email():
-    message = Message("邮件发送", recipients=["514979156@qq.com"], body="您正在更改zerobbs登录的邮箱，验证码：541234")
-    mail.send(message=message)
-    return "邮件发送成功"
+@bp.route("/email_captcha/")
+def email_captcha():
+    email = request.args.get('email')
+    if email:
+        source = list(string.ascii_letters)
+        source.extend(map(lambda x: str(x), list(range(9))))
+        captcha = "".join(random.sample(source, 6))
+        zerocache.set(email, captcha)
+        body = "您正在更改zerobbs登录的邮箱，验证码：%s" % captcha
+        message = Message("zero_bbs更换邮箱验证", recipients=["514979156@qq.com"], body=body)
+
+        try:
+            mail.send(message=message)
+        except:
+            return resultful.server_error()
+
+        return resultful.success()
+    else:
+        return resultful.params_error("请输入正确的邮箱")
 
 
 @bp.route('/logout/')

@@ -14,10 +14,14 @@ $(function () {
               "captcha": captcha
           },
           'success': function (data) {
-              console.log(data)
+             if (data['code'] == 200){
+                 zeroalert.alertSuccessToast("邮箱修改成功")
+             } else {
+                 zeroalert.alertInfo(data['message'])
+             }
           },
           'fail': function (errors) {
-              console.log("errors")
+              zeroalert.alertNetworkError()
           }
       })
   })

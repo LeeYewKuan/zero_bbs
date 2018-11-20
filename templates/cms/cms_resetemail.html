@@ -8,6 +8,7 @@
 
 {% block head %}
     <script src="{{ static('cms/js/resetemail.js') }}"></script>
+    <script src="{{ static('cms/js/email_captcha.js') }}"></script>
 {% endblock %}
 
 {% block page_title %}
@@ -20,7 +21,7 @@
             <div class="form-group">
                 <div class="input-group">
                     <input type="email" class="form-control" name="email" placeholder="新邮箱">
-                    <span class="input-group-addon">获取验证码</span>
+                    <span class="input-group-addon" id="email_captcha">获取验证码</span>
                 </div>
             </div>
              <div class="form-group">
