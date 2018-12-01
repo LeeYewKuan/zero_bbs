@@ -9,6 +9,45 @@ from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
 
 
+class CMSPermission(object):
+    """
+    权限表
+    255的二进制来表示
+    """
+    ALL_PERMISSION = 0b11111111
+    # 访问者
+    VISITOR = 0b00000001
+    # 管理帖子权限
+    POSTER = 0b00000010
+    # 管理评论的权限
+    COMMENTER = 0b00000100
+    # 板块权限
+    BOARDER = 0b00001000
+    # 前台用户
+    FRONTUSER = 0b00010000
+    # 后台用户
+    CMSUSER = 0b00100000
+    # 管理后台管理员权限
+    ADMINER = 0b0100000
+
+cms_role_user = db.Table(
+    'cms_role_user',
+    db.Column('cms_role_id', db.Integer, db.ForeignKey('cms_role.id'), primary_key=True),
+    db.Column('cms_user_id', db.Integer, db.ForeignKey('cms_user.id'), primary_key=True)
+)
+
+
+class CMSRole(db.Model):
+    __tablename__ = 'cms_role'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(50), nullable=False)
+    desc = db.Column(db.String(200), nullable=True)
+    create_time = db.Column(db.DateTime, default=datetime.now)
+    permissions = db.Column(db.Integer, default=CMSPermission.VISITOR)
+
+    users = db.relationship('CMSUser', secondary=cms_role_user, backref='roles')
+
+
 # 构建cms用户
 class CMSUser(db.Model):
     __tablename__ = 'cms_user'
@@ -37,3 +76,20 @@ class CMSUser(db.Model):
     def check_password(self, raw_password):
         result = check_password_hash(self.password, raw_password)
         return result
+
+    @property
+    def permissions(self):
+        if not self.roles:
+            return 0
+        all_permissions = 0
+        for role in self.roles:
+            permissions = role.permissions
+            all_permissions |= permissions
+        return all_permissions
+
+    def has_permission(self, permission):
+        return self.permissions & permission == permission
+
+    @property
+    def is_developer(self):
+        return self.has_permission(CMSPermission.ALL_PERMISSION)
